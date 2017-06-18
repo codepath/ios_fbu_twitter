@@ -1,0 +1,6 @@
+framework module Pods_twitter_alamofire_demoUITests {
+  umbrella header "Pods-twitter_alamofire_demoUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
