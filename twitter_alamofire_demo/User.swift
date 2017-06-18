@@ -14,5 +14,7 @@ class User {
 
    //MARK: TODO: Add Initializer with dictionary
 
-   //MARK: TODO: Add currentUser Singleton and get / set
+   //MARK: TODO: Add current user singleton
+
+   //MARK: TODO: Persist user
 }
