@@ -39,7 +39,7 @@ class APIManager: SessionManager {
          accessTokenUrl: "https://api.twitter.com/oauth/access_token"
       )
 
-      // Retrive access token from keychain
+      // Retrieve access token from keychain if it exists
       let keychain = Keychain()
       if let token = keychain["token_key"],
          let secret = keychain["secret_key"] {
@@ -53,7 +53,7 @@ class APIManager: SessionManager {
 
    //MARK: Authorize
    // OAuth Step 1
-   func authorize(success: @escaping () -> (), failure: @escaping (Error) -> ()) {
+   func login(success: @escaping () -> (), failure: @escaping (Error) -> ()) {
 
       // Add callback url to open app when returning from Twitter login on web
       let callbackURL = URL(string: APIManager.callbackURLString)!
@@ -97,11 +97,14 @@ class APIManager: SessionManager {
                print("Could not create user dictionary")
                return
             }
+            // MARK: Set currentUser
             if let name = userDictionary["name"] as? String {
                print("Hi \(name), we have you account info! 👌")
             }
       }
    }
+
+   //MARK: TODO: Logout, clear keychain, clear currentUser, post logout notification, redirect to twitter logout in browser?
 
    //MARK: TODO: Get Home Timeline
 
@@ -113,5 +116,7 @@ class APIManager: SessionManager {
 
    //MARK: TODO: Un-Retweet
 
-   //MARK: TODO: Post Tweet
+   //MARK: TODO: Compose Tweet
+
+   //MARK: TODO: Get User Timeline
 }

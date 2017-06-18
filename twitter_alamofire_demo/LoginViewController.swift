@@ -23,7 +23,7 @@ class LoginViewController: UIViewController {
 
 
    @IBAction func didTapLogin(_ sender: Any) {
-      APIManager.shared.authorize(success: {
+      APIManager.shared.login(success: {
          let defaults = UserDefaults.standard
          defaults.set(true, forKey: "isLoggedIn")
          self.performSegue(withIdentifier: "loginSegue", sender: nil)

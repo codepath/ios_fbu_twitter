@@ -15,9 +15,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-      // Override point for customization after application launch.
 
-      // APIManager.shared.getCurrentAccount()
+      //MARK: TODO: Check for logged in user
+
+      //MARK: TODO: Handle logout notification
+
 
       return true
    }
@@ -25,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
    //MARK: Open URL
    // OAuth step 2
    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-      // Handle url sent from
+      // Handle urlcallback sent from Twitter
       APIManager.shared.handle(url: url)
       return true
    }
