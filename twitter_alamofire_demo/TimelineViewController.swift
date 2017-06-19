@@ -13,6 +13,16 @@ class TimelineViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+      APIManager.shared.getHomeTimeLine { (tweets, error) in
+         if let error = error {
+            print("Error getting home timeline: " + error.localizedDescription)
+         } else if let tweets = tweets {
+            for tweet in tweets {
+               print(tweet.createdAtString ?? "no tweet text")
+            }
+         }
+      }
+
         // Do any additional setup after loading the view.
     }
 

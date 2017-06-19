@@ -108,6 +108,25 @@ class APIManager: SessionManager {
 
    //MARK: TODO: Get Home Timeline
 
+   func getHomeTimeLine(completion: @escaping ([Tweet]?, Error?) -> ()) {
+      request(URL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json")!, method: .get)
+         .validate()
+         .responseJSON { (response) in
+         guard response.result.isSuccess else {
+            completion(nil, response.result.error)
+            return
+         }
+         guard let tweetDictionaries = response.result.value as? [[String: Any]] else {
+            print("unable to create tweets dictionary")
+            return
+         }
+            let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
+               Tweet(dictionary: dictionary)
+            })
+         completion(tweets, nil)
+      }
+   }
+
    //MARK: TODO: Favorite a Tweet
 
    //MARK: TODO: Un-Favorite a Tweet
