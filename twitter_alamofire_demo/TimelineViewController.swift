@@ -13,23 +13,28 @@ class TimelineViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+
+
       APIManager.shared.getHomeTimeLine { (tweets, error) in
          if let error = error {
             print("Error getting home timeline: " + error.localizedDescription)
          } else if let tweets = tweets {
             for tweet in tweets {
-               print(tweet.createdAtString ?? "no tweet text")
+               print(tweet.createdAtString)
             }
          }
       }
-
-        // Do any additional setup after loading the view.
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+
+
+   @IBAction func didTapLogout(_ sender: Any) {
+      APIManager.shared.logout()
+   }
     
 
     /*

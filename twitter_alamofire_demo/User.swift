@@ -15,7 +15,7 @@ class User {
    var screenName: String?
 
    // For user persistance
-   var dictionary: [String: Any]?
+   var dictionary: [String: Any]
 
    //MARK: TODO: Add Initializer with dictionary
    init(dictionary: [String: Any]) {
@@ -43,7 +43,7 @@ class User {
          _currentUser = user
          let defaults = UserDefaults.standard
          if let user = user {
-            let data = try! JSONSerialization.data(withJSONObject: user.dictionary!, options: [])
+            let data = try! JSONSerialization.data(withJSONObject: user.dictionary, options: [])
             defaults.set(data, forKey: "currentUserData")
          } else {
             defaults.removeObject(forKey: "currentUserData")

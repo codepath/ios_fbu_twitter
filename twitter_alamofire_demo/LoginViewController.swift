@@ -16,6 +16,10 @@ class LoginViewController: UIViewController {
 
    }
 
+   override func viewDidAppear(_ animated: Bool) {
+      super.viewDidAppear(animated)
+   }
+
    override func didReceiveMemoryWarning() {
       super.didReceiveMemoryWarning()
       // Dispose of any resources that can be recreated.
@@ -24,11 +28,11 @@ class LoginViewController: UIViewController {
 
    @IBAction func didTapLogin(_ sender: Any) {
       APIManager.shared.login(success: {
-         let defaults = UserDefaults.standard
-         defaults.set(true, forKey: "isLoggedIn")
          self.performSegue(withIdentifier: "loginSegue", sender: nil)
       }) { (error) in
-         print(error.localizedDescription)
+         if let error = error {
+            print(error.localizedDescription)
+         }
       }
    }
    

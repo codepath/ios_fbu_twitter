@@ -16,15 +16,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-      //MARK: TODO: Check for logged in user
+      // MARK: TODO: Check for logged in user
+      NotificationCenter.default.addObserver(forName: Notification.Name("didLogout"), object: nil, queue: OperationQueue.main) { (Notification) in
+         print("Logout notification received")
+         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+         let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+         self.window?.rootViewController = loginVC
+      }
 
-      //MARK: TODO: Handle logout notification
+      // MARK: TODO: Handle logout notification
+
+      // MARK: Check for logged in user and take to timeline of found
+//      if User.currentUser != nil {
+//         print("current user found")
+//         let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//         let timelineVC = storyboard.instantiateViewController(withIdentifier: "TimelineViewController")
+//         window?.rootViewController = timelineVC
+//      }
 
 
       return true
    }
 
-   //MARK: Open URL
+   // MARK: TODO: Open URL
    // OAuth step 2
    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
       // Handle urlcallback sent from Twitter
