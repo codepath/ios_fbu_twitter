@@ -14,7 +14,7 @@ import KeychainAccess
 
 class APIManager: SessionManager {
 
-   //MARK: TODO: Add App Keys
+   // MARK: TODO: Add App Keys
    static let consumerKey = "uFTmFW66AAMEUwx3rZlZDMSCf"
    static let consumerSecret = "LtlxIoQpBvHcqjpSMIA9Gs2E9wCJbr7xkx9EpSdBYoNedaZUgh"
 
@@ -23,44 +23,10 @@ class APIManager: SessionManager {
    static let authorizeURL = "https://api.twitter.com/oauth/authorize"
    static let accessTokenURL = "https://api.twitter.com/oauth/access_token"
 
-   //MARK: TODO: Add Callback URL
+   // MARK: TODO: Add Callback URL
    static let callbackURLString = "alamoTwitter://"
 
-
-   //--------------------------------------------------------------------------------//
-
-
-   //MARK: Shared Instance
-   static var shared: APIManager = APIManager()
-
-   var oauthManager: OAuth1Swift!
-
-   // Private init for singleton only
-   private init() {
-      super.init()
-
-      // Create an instance of OAuth1Swift with credentials and oauth endpoints
-      oauthManager = OAuth1Swift(
-         consumerKey: APIManager.consumerKey,
-         consumerSecret: APIManager.consumerSecret,
-         requestTokenUrl: APIManager.requestTokenURL,
-         authorizeUrl: APIManager.authorizeURL,
-         accessTokenUrl: APIManager.accessTokenURL
-      )
-
-      // Retrieve access token from keychain if it exists
-      if let credential = retrieveCredentials() {
-         print("credentials found")
-         oauthManager.client.credential.oauthToken = credential.oauthToken
-         oauthManager.client.credential.oauthTokenSecret = credential.oauthTokenSecret
-      }
-
-      // Assign oauth request adapter to Alamofire SessionManager adapter to sign requests
-      adapter = oauthManager.requestAdapter
-   }
-
-   // MARK: Authorize
-   // OAuth Step 1
+   // MARK: Twitter API methods
    func login(success: @escaping () -> (), failure: @escaping (Error?) -> ()) {
 
       // Add callback url to open app when returning from Twitter login on web
@@ -75,7 +41,7 @@ class APIManager: SessionManager {
             if let error = error {
                failure(error)
             } else if let user = user {
-               print("we got the user")
+               print("Welcome \(user.name)")
                // MARK: Update currentUser
                User.currentUser = user
                success()
@@ -88,19 +54,12 @@ class APIManager: SessionManager {
 
    func logout() {
       clearCredentials()
+
       // TODO: Clear current user
       User.currentUser = nil
       // TODO: Post logout notification
       print("Logout notification posted")
       NotificationCenter.default.post(name: NSNotification.Name("didLogout"), object: nil)
-
-   }
-
-   // MARK: Handle url
-   // OAuth Step 3
-   // Finish oauth process by fetching access token
-   func handle(url: URL) {
-      OAuth1Swift.handle(url: url)
    }
 
    // MARK: TODO: Get current user's account
@@ -146,6 +105,57 @@ class APIManager: SessionManager {
       }
    }
 
+   // MARK: TODO: Favorite a Tweet
+
+   // MARK: TODO: Un-Favorite a Tweet
+
+   // MARK: TODO: Retweet
+
+   // MARK: TODO: Un-Retweet
+
+   // MARK: TODO: Compose Tweet
+
+   // MARK: TODO: Get User Timeline
+
+
+   //--------------------------------------------------------------------------------//
+
+
+   //MARK: OAuth
+   static var shared: APIManager = APIManager()
+
+   var oauthManager: OAuth1Swift!
+
+   // Private init for singleton only
+   private init() {
+      super.init()
+
+      // Create an instance of OAuth1Swift with credentials and oauth endpoints
+      oauthManager = OAuth1Swift(
+         consumerKey: APIManager.consumerKey,
+         consumerSecret: APIManager.consumerSecret,
+         requestTokenUrl: APIManager.requestTokenURL,
+         authorizeUrl: APIManager.authorizeURL,
+         accessTokenUrl: APIManager.accessTokenURL
+      )
+
+      // Retrieve access token from keychain if it exists
+      if let credential = retrieveCredentials() {
+         oauthManager.client.credential.oauthToken = credential.oauthToken
+         oauthManager.client.credential.oauthTokenSecret = credential.oauthTokenSecret
+      }
+
+      // Assign oauth request adapter to Alamofire SessionManager adapter to sign requests
+      adapter = oauthManager.requestAdapter
+   }
+
+   // MARK: Handle url
+   // OAuth Step 3
+   // Finish oauth process by fetching access token
+   func handle(url: URL) {
+      OAuth1Swift.handle(url: url)
+   }
+
    // MARK: Save Tokens in Keychain
    private func save(credential: OAuthSwiftCredential) {
 
@@ -170,19 +180,6 @@ class APIManager: SessionManager {
       keychain["token_key"] = nil
       keychain["secret_key"] = nil
    }
-
-
-   // MARK: TODO: Favorite a Tweet
-
-   // MARK: TODO: Un-Favorite a Tweet
-
-   // MARK: TODO: Retweet
-   
-   // MARK: TODO: Un-Retweet
-   
-   // MARK: TODO: Compose Tweet
-   
-   // MARK: TODO: Get User Timeline
 }
 
 enum JSONError: Error {
