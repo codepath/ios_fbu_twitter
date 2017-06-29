@@ -11,16 +11,19 @@ import Foundation
 class User {
 
    //MARK: TODO: Add User Properties
-   var name: String?
-   var screenName: String?
+   var name: String
+   var screenName: String
+   var profileImageURL: URL
 
    // For user persistance
    var dictionary: [String: Any]
 
    //MARK: TODO: Add Initializer with dictionary
    init(dictionary: [String: Any]) {
-      name = dictionary["name"] as? String
-      screenName = dictionary["screen_name"] as? String
+      name = dictionary["name"] as! String
+      screenName = dictionary["screen_name"] as! String
+      let profileImageURLString = dictionary["profile_image_url_https"] as! String
+      profileImageURL = URL(string: profileImageURLString)!
       self.dictionary = dictionary
    }
 
