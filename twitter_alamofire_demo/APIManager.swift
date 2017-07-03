@@ -78,6 +78,20 @@ class APIManager: SessionManager {
     }
         
     func getHomeTimeLine(completion: @escaping ([Tweet]?, Error?) -> ()) {
+
+        // This uses tweets from disk to avoid hitting rate limit. Comment out if you want fresh
+        // tweets,
+        if let data = UserDefaults.standard.object(forKey: "hometimeline_tweets") as? Data {
+            let tweetDictionaries = NSKeyedUnarchiver.unarchiveObject(with: data) as! [[String: Any]]
+            let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
+                Tweet(dictionary: dictionary)
+            })
+            
+            completion(tweets, nil)
+            return
+        }
+        
+        
         request(URL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json")!, method: .get)
             .validate()
             .responseJSON { (response) in
@@ -91,6 +105,10 @@ class APIManager: SessionManager {
                     completion(nil, error)
                     return
                 }
+                
+                let data = NSKeyedArchiver.archivedData(withRootObject: tweetDictionaries)
+                UserDefaults.standard.set(data, forKey: "hometimeline_tweets")
+                UserDefaults.standard.synchronize()
                 
                 let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
                     Tweet(dictionary: dictionary)
