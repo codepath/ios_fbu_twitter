@@ -17,7 +17,7 @@ class APIManager: SessionManager {
     // MARK: TODO: Add App Keys
     static let consumerKey = "YOUR_KEY_HERE"
     static let consumerSecret = "YOUR_SECRET_HERE"
-    
+
     static let requestTokenURL = "https://api.twitter.com/oauth/request_token"
     static let authorizeURL = "https://api.twitter.com/oauth/authorize"
     static let accessTokenURL = "https://api.twitter.com/oauth/access_token"
@@ -57,23 +57,22 @@ class APIManager: SessionManager {
 
         NotificationCenter.default.post(name: NSNotification.Name("didLogout"), object: nil)
     }
-    
+
     func getCurrentAccount(completion: @escaping (User?, Error?) -> ()) {
         request(URL(string: "https://api.twitter.com/1.1/account/verify_credentials.json")!)
             .validate()
             .responseJSON { response in
-                
-                // Check for errors
-                guard response.result.isSuccess else {
-                    completion(nil, response.result.error)
-                    return
+                switch response.result {
+                case .failure(let error):
+                    completion(nil, error)
+                    break;
+                case .success:
+                    guard let userDictionary = response.result.value as? [String: Any] else {
+                        completion(nil, JSONError.parsing("Unable to create user dictionary"))
+                        return
+                    }
+                    completion(User(dictionary: userDictionary), nil)
                 }
-                
-                guard let userDictionary = response.result.value as? [String: Any] else {
-                    completion(nil, JSONError.parsing("Unable to create user dictionary"))
-                    return
-                }
-                completion(User(dictionary: userDictionary), nil)
         }
     }
         
@@ -86,34 +85,35 @@ class APIManager: SessionManager {
             let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
                 Tweet(dictionary: dictionary)
             })
-            
+
             completion(tweets, nil)
             return
         }
-        
-        
+
         request(URL(string: "https://api.twitter.com/1.1/statuses/home_timeline.json")!, method: .get)
             .validate()
             .responseJSON { (response) in
-                guard response.result.isSuccess else {
-                    completion(nil, response.result.error)
-                    return
-                }
-                guard let tweetDictionaries = response.result.value as? [[String: Any]] else {
-                    print("Failed to parse tweets")
-                    let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse tweets"])
+                switch response.result {
+                case .failure(let error):
                     completion(nil, error)
                     return
+                case .success:
+                    guard let tweetDictionaries = response.result.value as? [[String: Any]] else {
+                        print("Failed to parse tweets")
+                        let error = NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey : "Failed to parse tweets"])
+                        completion(nil, error)
+                        return
+                    }
+
+                    let data = NSKeyedArchiver.archivedData(withRootObject: tweetDictionaries)
+                    UserDefaults.standard.set(data, forKey: "hometimeline_tweets")
+                    UserDefaults.standard.synchronize()
+
+                    let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
+                        Tweet(dictionary: dictionary)
+                    })
+                    completion(tweets, nil)
                 }
-                
-                let data = NSKeyedArchiver.archivedData(withRootObject: tweetDictionaries)
-                UserDefaults.standard.set(data, forKey: "hometimeline_tweets")
-                UserDefaults.standard.synchronize()
-                
-                let tweets = tweetDictionaries.flatMap({ (dictionary) -> Tweet in
-                    Tweet(dictionary: dictionary)
-                })
-                completion(tweets, nil)
         }
     }
     
