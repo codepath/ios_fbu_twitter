@@ -121,6 +121,15 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		BE4D1BBB2168093600E21A30 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BE4D1BB72168078300E21A30 /* User.swift */,
+				BE4D1BB92168082300E21A30 /* Tweet.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
 		ED1AFD241E942B2500FD4B90 = {
 			isa = PBXGroup;
 			children = (
@@ -146,8 +155,7 @@
 		ED1AFD2F1E942B2500FD4B90 /* twitter_alamofire_demo */ = {
 			isa = PBXGroup;
 			children = (
-				BE4D1BB72168078300E21A30 /* User.swift */,
-				BE4D1BB92168082300E21A30 /* Tweet.swift */,
+				BE4D1BBB2168093600E21A30 /* Models */,
 				ED1AFD341E942B2500FD4B90 /* Main.storyboard */,
 				ED1D23501EF7650B00C51ACC /* API */,
 				ED1D234A1EF6E3B800C51ACC /* View Controllers */,
