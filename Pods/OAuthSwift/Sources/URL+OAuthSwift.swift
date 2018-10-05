@@ -8,18 +8,17 @@
 
 import Foundation
 
-
 extension URL {
 
     func urlByAppending(queryString: String) -> URL {
-        if queryString.utf16.count == 0 {
+        if queryString.utf16.isEmpty {
             return self
         }
 
         var absoluteURLString = absoluteString
 
         if absoluteURLString.hasSuffix("?") {
-             absoluteURLString.dropLast()
+            absoluteURLString.dropLast()
         }
 
         let string = absoluteURLString + (absoluteURLString.range(of: "?") != nil ? "&" : "?") + queryString
