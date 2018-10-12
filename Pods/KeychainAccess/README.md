@@ -1,9 +1,12 @@
 # KeychainAccess
 [![CI Status](http://img.shields.io/travis/kishikawakatsumi/KeychainAccess.svg)](https://travis-ci.org/kishikawakatsumi/KeychainAccess)
-[![Coverage Status](https://img.shields.io/coveralls/kishikawakatsumi/KeychainAccess.svg)](https://coveralls.io/github/kishikawakatsumi/KeychainAccess?branch=master)
+[![codecov](https://codecov.io/gh/kishikawakatsumi/KeychainAccess/branch/master/graph/badge.svg)](https://codecov.io/gh/kishikawakatsumi/KeychainAccess)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/KeychainAccess.svg)](http://cocoadocs.org/docsets/KeychainAccess)
 [![Platform](https://img.shields.io/cocoapods/p/KeychainAccess.svg)](http://cocoadocs.org/docsets/KeychainAccess)
+[![Swift 3.x](https://img.shields.io/badge/Swift-3.x-orange.svg?style=flat)](https://swift.org/)
+[![Swift 4.0](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)](https://swift.org/)
+[![Swift 4.1](https://img.shields.io/badge/Swift-4.1-orange.svg?style=flat)](https://swift.org/)
 
 KeychainAccess is a simple Swift wrapper for Keychain that works on iOS and OS X. Makes using Keychain APIs extremely easy and much more palatable to use in Swift.
 
@@ -21,12 +24,11 @@ KeychainAccess is a simple Swift wrapper for Keychain that works on iOS and OS X
 - **[Support Shared Web Credentials (iOS 8+)](#shared_web_credentials)**
 - [Works on both iOS & OS X](#requirements)
 - [watchOS and tvOS are supported](#requirements)
-- **[Swift 3 & Swift 2.3 compatible](#requirements)**
+- **[Swift 4 & Swift 3 compatible](#requirements)**
 
 ## :book: Usage
 
 ##### :eyes: See also:  
-- [:link: Playground](https://github.com/kishikawakatsumi/KeychainAccess/blob/master/Examples/Playground-iOS.playground/section-1.swift)  
 - [:link: iOS Example Project](https://github.com/kishikawakatsumi/KeychainAccess/tree/master/Examples/Example-iOS)
 
 ### :key: Basics
@@ -41,7 +43,7 @@ keychain["kishikawakatsumi"] = "01234567-89ab-cdef-0123-456789abcdef"
 #### Saving Internet Password
 
 ```swift
-let keychain = Keychain(server: "https://github.com", protocolType: .HTTPS)
+let keychain = Keychain(server: "https://github.com", protocolType: .https)
 keychain["kishikawakatsumi"] = "01234567-89ab-cdef-0123-456789abcdef"
 ```
 
@@ -60,11 +62,11 @@ let keychain = Keychain(service: "com.example.github-token", accessGroup: "12ABC
 #### Create Keychain for Internet Password
 
 ```swift
-let keychain = Keychain(server: "https://github.com", protocolType: .HTTPS)
+let keychain = Keychain(server: "https://github.com", protocolType: .https)
 ```
 
 ```swift
-let keychain = Keychain(server: "https://github.com", protocolType: .HTTPS, authenticationType: .HTMLForm)
+let keychain = Keychain(server: "https://github.com", protocolType: .https, authenticationType: .htmlForm)
 ```
 
 ### :key: Adding an item
@@ -163,7 +165,7 @@ do {
 ### :key: Set Label and Comment
 
 ```swift
-let keychain = Keychain(server: "https://github.com", protocolType: .HTTPS)
+let keychain = Keychain(server: "https://github.com", protocolType: .https)
 do {
     try keychain
         .label("github.com (kishikawakatsumi)")
@@ -242,7 +244,7 @@ let keychain = Keychain(service: "com.example.github-token")
 
 ```swift
 let keychain = Keychain(service: "com.example.github-token")
-    .accessibility(.AfterFirstUnlock)
+    .accessibility(.afterFirstUnlock)
 
 keychain["kishikawakatsumi"] = "01234567-89ab-cdef-0123-456789abcdef"
 ```
@@ -267,7 +269,7 @@ do {
 
 ```swift
 let keychain = Keychain(service: "com.example.github-token")
-    .accessibility(.WhenUnlocked)
+    .accessibility(.whenUnlocked)
 
 keychain["kishikawakatsumi"] = "01234567-89ab-cdef-0123-456789abcdef"
 ```
@@ -329,11 +331,11 @@ If you want to store the Touch ID protected Keychain item, specify `accessibilit
 ```swift
 let keychain = Keychain(service: "com.example.github-token")
 
-dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+DispatchQueue.global().async {
     do {
         // Should be the secret invalidated when passcode is removed? If not then use `.WhenUnlocked`
         try keychain
-            .accessibility(.WhenPasscodeSetThisDeviceOnly, authenticationPolicy: .UserPresence)
+            .accessibility(.whenPasscodeSetThisDeviceOnly, authenticationPolicy: .userPresence)
             .set("01234567-89ab-cdef-0123-456789abcdef", key: "kishikawakatsumi")
     } catch let error {
         // Error handling if needed...
@@ -354,7 +356,7 @@ If the item not protected, the `authenticationPrompt` parameter just be ignored.
 ```swift
 let keychain = Keychain(service: "com.example.github-token")
 
-DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
+DispatchQueue.global().async {
     do {
         // Should be the secret invalidated when passcode is removed? If not then use `.WhenUnlocked`
         try keychain
@@ -376,7 +378,7 @@ If the item not protected, the `authenticationPrompt` parameter just be ignored.
 ```swift
 let keychain = Keychain(service: "com.example.github-token")
 
-DispatchQueue.global(qos: DispatchQoS.QoSClass.default).async {
+DispatchQueue.global().async {
     do {
         let password = try keychain
             .authenticationPrompt("Authenticate to login to server")
@@ -477,16 +479,16 @@ let password = Keychain.generatePassword() // => Nhu-GKm-s3n-pMx
 #### Display all stored items if print keychain object
 
 ```swift
-let keychain = Keychain(server: "https://github.com", protocolType: .HTTPS)
+let keychain = Keychain(server: "https://github.com", protocolType: .https)
 print("\(keychain)")
 ```
 
 ```
 =>
 [
-  [authenticationType: Default, key: kishikawakatsumi, server: github.com, class: InternetPassword, protocol: HTTPS]
-  [authenticationType: Default, key: hirohamada, server: github.com, class: InternetPassword, protocol: HTTPS]
-  [authenticationType: Default, key: honeylemon, server: github.com, class: InternetPassword, protocol: HTTPS]
+  [authenticationType: default, key: kishikawakatsumi, server: github.com, class: internetPassword, protocol: https]
+  [authenticationType: default, key: hirohamada, server: github.com, class: internetPassword, protocol: https]
+  [authenticationType: default, key: honeylemon, server: github.com, class: internetPassword, protocol: https]
 ]
 ```
 
@@ -521,9 +523,9 @@ for item in items {
 
 ```
 =>
-item: [authenticationType: Default, key: kishikawakatsumi, server: github.com, class: InternetPassword, protocol: HTTPS]
-item: [authenticationType: Default, key: hirohamada, server: github.com, class: InternetPassword, protocol: HTTPS]
-item: [authenticationType: Default, key: honeylemon, server: github.com, class: InternetPassword, protocol: HTTPS]
+item: [authenticationType: Default, key: kishikawakatsumi, server: github.com, class: InternetPassword, protocol: https]
+item: [authenticationType: Default, key: hirohamada, server: github.com, class: InternetPassword, protocol: https]
+item: [authenticationType: Default, key: honeylemon, server: github.com, class: InternetPassword, protocol: https]
 ```
 
 ## Requirements
@@ -537,7 +539,8 @@ item: [authenticationType: Default, key: honeylemon, server: github.com, class: 
 | **v2.2.x** | iOS 8+, OSX 10.9+, watchOS 2+, tvOS 9+ | 2.0, 2.1      |
 | **v2.3.x** | iOS 8+, OSX 10.9+, watchOS 2+, tvOS 9+ | 2.0, 2.1, 2.2 |
 | **v2.4.x** | iOS 8+, OSX 10.9+, watchOS 2+, tvOS 9+ | 2.2, 2.3      |
-| **v3.x**   | iOS 8+, OSX 10.9+, watchOS 2+, tvOS 9+ | 3.0           |
+| **v3.0.x** | iOS 8+, OSX 10.9+, watchOS 2+, tvOS 9+ | 3.x           |
+| **v3.1.x** | iOS 8+, OSX 10.9+, watchOS 2+, tvOS 9+ | 4.0, 4.1      |
 
 ## Installation
 
